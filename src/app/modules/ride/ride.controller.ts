@@ -2,12 +2,12 @@
 import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
 import { sendResponse } from "../../utils/sendResponse";
-import { rideService } from "./ride.service";
+import { RideService } from "./ride.service";
 import { StatusCodes } from "http-status-codes";
 
 const getAllRides = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await rideService.getAllRides();
+    const result = await RideService.getAllRides();
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       success: true,
@@ -21,7 +21,7 @@ const getAllRides = catchAsync(
 const getRiderHistory = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const riderId = req.id;
-    const result = await rideService.getRiderHistory(riderId);
+    const result = await RideService.getRiderHistory(riderId);
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       success: true,
@@ -34,7 +34,7 @@ const getRiderHistory = catchAsync(
 
 const getAvailableRides = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await rideService.getAvailableRides();
+    const result = await RideService.getAvailableRides();
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       success: true,
@@ -47,8 +47,9 @@ const getAvailableRides = catchAsync(
 
 const requestRide = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.id);
     const riderId = req.id;
-    const result = await rideService.requestRide(req.body, riderId);
+    const result = await RideService.requestRide(req.body, riderId);
     sendResponse(res, {
       statusCode: StatusCodes.CREATED,
       success: true,
@@ -61,7 +62,7 @@ const requestRide = catchAsync(
 const acceptRide = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const driverId = req.id;
-    const result = await rideService.acceptRide(req.params.id, driverId);
+    const result = await RideService.acceptRide(req.params.id, driverId);
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       success: true,
@@ -74,7 +75,7 @@ const acceptRide = catchAsync(
 const updateRideStatus = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const driverId = req.id;
-    const result = await rideService.updateRideStatus(req.params.id, driverId);
+    const result = await RideService.updateRideStatus(req.params.id, driverId);
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       success: true,
@@ -87,7 +88,7 @@ const updateRideStatus = catchAsync(
 const cancelRide = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userid = req.id;
-    const result = await rideService.cancelRide(userid);
+    const result = await RideService.cancelRide(userid);
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       success: true,

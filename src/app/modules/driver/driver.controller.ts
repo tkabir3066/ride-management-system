@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../utils/catchAsync";
-import { driverService } from "./driver.service";
+import { DriverService } from "./driver.service";
 import { sendResponse } from "../../utils/sendResponse";
 import { StatusCodes } from "http-status-codes";
 import { DriverAvailability, DriverStatus } from "./driver.interface";
@@ -9,7 +9,8 @@ import { DriverAvailability, DriverStatus } from "./driver.interface";
 const addDriverInfo = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.id;
-    const result = await driverService.addDriverInfo(req.body, userId);
+
+    const result = await DriverService.addDriverInfo(req.body, userId);
     sendResponse(res, {
       statusCode: StatusCodes.CREATED,
       success: true,
@@ -20,7 +21,7 @@ const addDriverInfo = catchAsync(
 );
 const approveDriver = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await driverService.approveDriver(req.params.id);
+    const result = await DriverService.approveDriver(req.params.id);
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.OK,
@@ -33,7 +34,7 @@ const approveDriver = catchAsync(
 const getCompletedRides = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const driverId = req.id;
-    const result = await driverService.getCompletedRides(driverId);
+    const result = await DriverService.getCompletedRides(driverId);
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       success: true,
@@ -46,7 +47,7 @@ const getCompletedRides = catchAsync(
 const updateAvailabilityToOnline = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const driverId = req.id;
-    const result = await driverService.updateAvailabilityToOnline(driverId);
+    const result = await DriverService.updateAvailabilityToOnline(driverId);
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.ACCEPTED,
@@ -58,7 +59,7 @@ const updateAvailabilityToOnline = catchAsync(
 const updateAvailabilityToOffline = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const driverId = req.id;
-    const result = await driverService.updateAvailabilityToOffline(driverId);
+    const result = await DriverService.updateAvailabilityToOffline(driverId);
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.ACCEPTED,
@@ -69,7 +70,7 @@ const updateAvailabilityToOffline = catchAsync(
 );
 const suspendDriver = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await driverService.suspendDriver(req.params.id);
+    const result = await DriverService.suspendDriver(req.params.id);
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.OK,
@@ -81,7 +82,7 @@ const suspendDriver = catchAsync(
 const getEarnings = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
     const driverId = req.id;
-    const result = await driverService.getEarnings(driverId);
+    const result = await DriverService.getEarnings(driverId);
     sendResponse(res, {
       success: true,
       statusCode: StatusCodes.OK,
@@ -92,7 +93,7 @@ const getEarnings = catchAsync(
 );
 const getAllDrivers = catchAsync(
   async (req: Request, res: Response, next: NextFunction) => {
-    const result = await driverService.getAllDrivers();
+    const result = await DriverService.getAllDrivers();
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       success: true,

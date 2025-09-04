@@ -23,32 +23,21 @@ export const globalErrorHandler = async (
   let statusCode = 500;
   let message = `Something went wrong!!`;
 
-  //Duplicate Error
   if (err.code === 11000) {
     const simplifiedError = handleDuplicateError(err);
-
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
-  }
-  //CastError/ObjectId error
-  else if (err.name === "CastError") {
+  } else if (err.name === "CastError") {
     const simplifiedError = handleCastError(err);
-    const statusCode = simplifiedError.statusCode;
+    statusCode = simplifiedError.statusCode; // <-- fixed (no shadowing)
     message = simplifiedError.message;
-  }
-  //validation error
-  else if (err.name === "ValidationError") {
+  } else if (err.name === "ValidationError") {
     const simplifiedError = handleValidationError(err);
-
     statusCode = simplifiedError.statusCode;
     message = "Validation Error occurred";
     errorSources = simplifiedError.errorSources as TErrorSources[];
-  }
-
-  //zod error
-  else if (err.name === "ZodError") {
+  } else if (err.name === "ZodError") {
     const simplifiedError = handleZodError(err);
-
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
     errorSources = simplifiedError.errorSources as TErrorSources[];
@@ -59,6 +48,7 @@ export const globalErrorHandler = async (
     statusCode = 500;
     message = err.message;
   }
+
   res.status(statusCode).json({
     success: false,
     message: message,

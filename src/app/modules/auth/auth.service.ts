@@ -38,7 +38,9 @@ const getNewAccessToken = async (refreshToken: string) => {
   };
 };
 
-const login = async (res: Response, payload: Partial<IUser>) => {
+type TLoginPayload = Pick<IUser, "email" | "password">;
+
+const login = async (res: Response, payload: TLoginPayload) => {
   const { email, password } = payload;
   const isUserExist = await User.findOne({ email }).select("+password");
   console.log(isUserExist?.password);
@@ -47,13 +49,17 @@ const login = async (res: Response, payload: Partial<IUser>) => {
   }
   const isPasswordMatch = await bcryptjs.compare(
     password as string,
-    isUserExist.password
+    isUserExist.password as string
   );
   if (!isPasswordMatch) {
     throw new AppError(StatusCodes.BAD_REQUEST, "Invalid Password");
   }
 
-  const { accessToken, refreshToken } = createUsersToken(isUserExist);
+  const { accessToken, refreshToken } = createUsersToken({
+    _id: String(isUserExist._id),
+    email: isUserExist.email,
+    role: isUserExist.role,
+  });
   setAuthCookie(res, {
     accessToken,
     refreshToken,

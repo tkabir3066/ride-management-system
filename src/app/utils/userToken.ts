@@ -6,7 +6,8 @@ import { generateToken, verifyToken } from "../utils/jwt";
 import { JwtPayload } from "jsonwebtoken";
 import { IUser } from "../modules/user/user.interface";
 
-export const createUsersToken = (user: Partial<IUser>) => {
+type MinimalUserForToken = Pick<IUser, "email" | "role"> & { _id: string };
+export const createUsersToken = (user: MinimalUserForToken) => {
   const jwtPayload = {
     email: user?.email,
     userId: user._id,

@@ -10,10 +10,15 @@ export const checkAuth =
   (...authRoles: string[]) =>
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const accessToken = req.headers.authorization;
+      // Accept "Authorization: Bearer <token>" or cookie "accessToken"
+      const rawAuth = req.headers.authorization ?? "";
+      const bearerToken = rawAuth.startsWith("Bearer ")
+        ? rawAuth.slice(7)
+        : undefined;
+      const accessToken = bearerToken || (req as any).cookies?.accessToken;
 
       if (!accessToken) {
-        throw new AppError(403, "No Token Recived");
+        throw new AppError(StatusCodes.FORBIDDEN, "No token received");
       }
 
       const verifiedToken = verifyToken(
@@ -21,23 +26,24 @@ export const checkAuth =
         envVars.JWT_ACCESS_SECRET
       ) as JwtPayload;
 
-      const isUserExist = await User.findOne({
-        email: verifiedToken.email,
-      });
-
+      const isUserExist = await User.findOne({ email: verifiedToken.email });
       if (!isUserExist) {
         throw new AppError(StatusCodes.BAD_REQUEST, "User does not exist");
       }
-
-      if (isUserExist?.isBlocked) {
-        throw new AppError(StatusCodes.BAD_REQUEST, `User is Blocked`);
+      if (isUserExist.isBlocked) {
+        throw new AppError(StatusCodes.BAD_REQUEST, "User is Blocked");
       }
 
-      if (!authRoles.includes(verifiedToken.role)) {
-        throw new AppError(403, "You are not permitted to view this route!!!");
+      if (!authRoles.includes(String(verifiedToken.role))) {
+        throw new AppError(
+          StatusCodes.FORBIDDEN,
+          "You are not permitted to view this route!!!"
+        );
       }
-      req.user = verifiedToken;
-      req.id = isUserExist.id;
+
+      // augment request
+      (req as any).user = verifiedToken;
+      (req as any).id = isUserExist.id;
       next();
     } catch (error) {
       next(error);
