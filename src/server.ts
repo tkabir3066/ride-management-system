@@ -3,12 +3,13 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import app from "./app";
 import { envVars } from "./app/config/env";
+import { seedAdmin } from "./app/utils/seedAdmin";
 
 dotenv.config();
 
 let server: Server;
 
-const startServer = async () => {
+const startServer = async (): Promise<void> => {
   try {
     await mongoose.connect(envVars.MONGO_URI);
     console.log("MongoDB connected successfully");
@@ -21,7 +22,10 @@ const startServer = async () => {
   }
 };
 
-startServer();
+(async () => {
+  await startServer();
+  await seedAdmin();
+})();
 
 process.on("SIGTERM", () => {
   console.log("SIGTERM Signal received...server shutting down..");
